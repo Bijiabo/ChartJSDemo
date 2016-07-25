@@ -24,17 +24,38 @@
 
     var drawLineByDataForCanvas = function(data, canvas, color, width) {
 
-        if (color === undefined) { color = 'rgba(0,0,0,1)';}
+        var formatData = function(originalData) {
+            var formatedData = [];
+            for (var i=0,len=originalData.length; i<len; i++) {
+                formatedData.push({
+                    x: i*10,
+                    y: originalData[i]
+                });
+            }
+            return formatedData;
+        };
 
-        var maxYValueInData;
+        data = formatData(data);
+
+        var maxYValueInData, minYValueInData;
         for(var i=0,len=data.length; i<len; i++) {
             if (i === 0)
             {
                 maxYValueInData = data[i].y;
+                minYValueInData = data[i].y;
             }
-            else if (maxYValueInData<data[i].y)
+            else
             {
-                maxYValueInData = data[i].y;
+                if (maxYValueInData<data[i].y)
+                {
+                    maxYValueInData = data[i].y;
+                }
+
+                if (minYValueInData>data[i].y)
+                {
+                    minYValueInData = data[i].y;
+                }
+
             }
         }
         if (maxYValueInData === undefined) {maxYValueInData = 0;}
@@ -49,21 +70,29 @@
                         tension: 0.2,
                         fill: false,
                         pointStyle: 'line',
-                        borderColor: color,
-                        borderWidth: width || 1
-                    },
+                        pointBorderColor: 'rgba(0,0,0,0)',
+                        pointBackgroundColor: 'rgba(0,0,0,0)',
+                        borderColor: color || 'rgba(0,0,0,1)',
+                        borderWidth: width || 1,
+                        spanGaps: true
+                    }/*,
                     {
                         label: 'other',
                         data: [
                             {
                                 x: data[0].x,
                                 y: maxYValueInData+1
+                            },
+                            {
+                                x: data[0].x,
+                                y: minYValueInData-1
                             }
                         ],
                         tension: 0.2,
                         fill: false,
-                        pointStyle: 'line'
-                    }
+                        pointStyle: 'line',
+                        borderColor: 'rgba(255,255,255,0)'
+                    }*/
                 ]
             },
             options: {
@@ -89,7 +118,6 @@
                         gridLines: {
                             display: false
                         }
-
                     }],
                     yAxes: [
                         {
@@ -99,6 +127,9 @@
                             },
                             labels: {
                                 fontSize: 1
+                            },
+                            ticks: {
+                                beginAtZero: true
                             }
 
                         }
@@ -109,16 +140,12 @@
     };
 
     var data = [
-        {
-            x: -10,
-            y: 20
-        }, {
-            x: 0,
-            y: 1
-        }, {
-            x: 10,
-            y: 5
-        }
+            19.2,
+            18,
+            20.4,
+            19,
+            17.9,
+            18
     ];
     var ctx = document.getElementById("myChart");
     drawLineByDataForCanvas(data, ctx, 'rgba(123, 175, 255, 1)', 2);
