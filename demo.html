@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chart.js Demo</title>
+    <script src="js/Chart.js"></script>
+    <style>
+        .canvas-container {
+            width: 300px;
+            height: 200px;
+            /*background-color: rgba(0,0,0,1);*/
+        }
+    </style>
+</head>
+<body>
+<div class="canvas-container">
+    <canvas id="myChart" width="400" height="200"></canvas>
+</div>
+
+
+<script>
+    Chart.defaults.global.animation = false;
+    Chart.defaults.global.spanGaps = true;
+
+    var drawLineByDataForCanvas = function(data, canvas, color, width) {
+
+        if (color === undefined) { color = 'rgba(0,0,0,1)';}
+
+        var maxYValueInData;
+        for(var i=0,len=data.length; i<len; i++) {
+            if (i === 0)
+            {
+                maxYValueInData = data[i].y;
+            }
+            else if (maxYValueInData<data[i].y)
+            {
+                maxYValueInData = data[i].y;
+            }
+        }
+        if (maxYValueInData === undefined) {maxYValueInData = 0;}
+
+        var scatterChart = new Chart(canvas, {
+            type: 'line',
+            data: {
+                datasets: [
+                    {
+                        label: 'Scatter Dataset',
+                        data: data,
+                        tension: 0.2,
+                        fill: false,
+                        pointStyle: 'line',
+                        borderColor: color,
+                        borderWidth: width || 1
+                    },
+                    {
+                        label: 'other',
+                        data: [
+                            {
+                                x: data[0].x,
+                                y: maxYValueInData+1
+                            }
+                        ],
+                        tension: 0.2,
+                        fill: false,
+                        pointStyle: 'line'
+                    }
+                ]
+            },
+            options: {
+                scaleOverride : true,
+                scaleSteps : 100,
+                scaleStepWidth : 1,
+                scaleStartValue : 0,
+                responsive: true,
+                title: {
+                    display: false
+                },
+                legend: {
+                    display: false
+                },
+                tooltips: {
+                    enabled: false
+                },
+                scales: {
+                    xAxes: [{
+                        display:false,
+                        type: 'linear',
+                        position: 'bottom',
+                        gridLines: {
+                            display: false
+                        }
+
+                    }],
+                    yAxes: [
+                        {
+                            display:false,
+                            gridLines: {
+                                display: false
+                            },
+                            labels: {
+                                fontSize: 1
+                            }
+
+                        }
+                    ]
+                }
+            }
+        });
+    };
+
+    var data = [
+        {
+            x: -10,
+            y: 20
+        }, {
+            x: 0,
+            y: 1
+        }, {
+            x: 10,
+            y: 5
+        }
+    ];
+    var ctx = document.getElementById("myChart");
+    drawLineByDataForCanvas(data, ctx, 'rgba(123, 175, 255, 1)', 2);
+
+</script>
+
+</body>
+</html>
